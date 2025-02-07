@@ -1,7 +1,7 @@
 # BackLive
 
-[![Python package](https://github.com/linhai-fn/python_playground/actions/workflows/python-package.yml/badge.svg)](https://github.com/linhai-fn/python_playground/actions/workflows/python-package.yml)
-[![codecov](https://codecov.io/github/linhai-fn/python_playground/graph/badge.svg?token=MU9U78IOLJ)](https://codecov.io/github/linhai-fn/python_playground)
+[![Python package](https://github.com/linhai86/backlive/actions/workflows/python-package.yml/badge.svg)](https://github.com/linhai86/backlive/actions/workflows/python-package.yml)
+[![codecov](https://codecov.io/gh/linhai86/backlive/graph/badge.svg?token=G6LFRO9Z7S)](https://codecov.io/gh/linhai86/backlive)
 
 ## Description
 
