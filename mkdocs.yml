@@ -1,6 +1,6 @@
 site_name: Python Playground
 site_description: A Python project template
-site_url: https://linhai-fn.github.io/python_playground
+site_url: https://linhai86.github.io/backlive
 
 theme:
   name: material
@@ -41,8 +41,8 @@ theme:
   icon:
     repo: fontawesome/brands/github-alt
 
-repo_name: python_playground
-repo_url: https://github.com/linhai-fn/python_playground
+repo_name: backlive
+repo_url: https://github.com/linhai86/backlive
 
 nav:
   - Home: index.md
