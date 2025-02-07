@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "mergeConfidence:all-badges",
+    ":automergeStableNonMajor",
+    ":combinePatchMinorReleases",
+    ":timezone(America/Los_Angeles)",
+    "schedule:monthly"
+  ],
+  "lockFileMaintenance": { "enabled": true }
+}
