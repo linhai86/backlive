@@ -18,5 +18,5 @@ def main() -> None:
     print(f"Saved ticker: {ticker.symbol} with {len(ticker.candles)} candle records")
 
 
-if __name__:
+if __name__ == "__main__":
     main()
