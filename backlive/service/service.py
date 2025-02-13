@@ -1,10 +1,10 @@
 from ..domain.models import Ticker
 from ..feed.base import IFeed
-from ..repository.unit_of_work import UnitOfWork
+from ..repository.unit_of_work import IUnitOfWork
 
 
 class TickerService:
-    def __init__(self, uow: UnitOfWork, feed: IFeed):
+    def __init__(self, uow: IUnitOfWork, feed: IFeed):
         self.uow = uow
         self.feed = feed
 
