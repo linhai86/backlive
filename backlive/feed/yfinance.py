@@ -1,3 +1,5 @@
+from typing import override
+
 import yfinance as yf  # type: ignore[import-untyped]
 
 from ..domain.models import Candle
@@ -5,6 +7,7 @@ from .base import IFeed
 
 
 class YFinanceFeed(IFeed):
+    @override
     def fetch_candles(self, symbol: str) -> list[Candle]:
         ticker = yf.Ticker(symbol)
         history = ticker.history(period="1y")

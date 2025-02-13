@@ -1,7 +1,7 @@
 from copy import deepcopy
 from datetime import datetime
 from types import TracebackType
-from typing import Self
+from typing import Self, override
 
 import pytest
 
@@ -15,12 +15,15 @@ class FakeTickerRepository(ITickerRepository):
     def __init__(self) -> None:
         self.tickers: dict[str, Ticker] = {}
 
+    @override
     def add_ticker(self, ticker: Ticker) -> None:
         self.tickers[ticker.symbol] = deepcopy(ticker)
 
+    @override
     def get_ticker(self, symbol: str) -> Ticker | None:
         return self.tickers.get(symbol)
 
+    @override
     def add_candles(self, symbol: str, candles: list[Candle]) -> None:
         ticker = self.get_ticker(symbol)
         if ticker:
@@ -32,13 +35,16 @@ class FakeUnitOfWork(IUnitOfWork):
         self._repository = FakeTickerRepository()
         self.committed = False
 
+    @override
     @property
     def repository(self) -> ITickerRepository:
         return self._repository
 
+    @override
     def __enter__(self) -> Self:
         return self
 
+    @override
     def __exit__(
         self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
     ) -> None:
@@ -47,9 +53,11 @@ class FakeUnitOfWork(IUnitOfWork):
         else:
             self.commit()
 
+    @override
     def commit(self) -> None:
         self.committed = True
 
+    @override
     def rollback(self) -> None:
         pass
 

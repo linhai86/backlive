@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import asdict
+from typing import override
 
 from sqlalchemy import insert, select
 from sqlalchemy.orm import Session
@@ -26,10 +27,12 @@ class SQLAlchemyTickerRepository(ITickerRepository):
     def __init__(self, session: Session):
         self.session = session
 
+    @override
     def add_ticker(self, ticker: Ticker) -> None:
         ticker_model = TickerModel(symbol=ticker.symbol, name=ticker.name)
         self.session.add(ticker_model)
 
+    @override
     def get_ticker(self, symbol: str) -> Ticker | None:
         ticker_model = self.session.scalars(select(TickerModel).where(TickerModel.symbol == symbol)).one_or_none()
         if ticker_model:
@@ -47,6 +50,7 @@ class SQLAlchemyTickerRepository(ITickerRepository):
             return Ticker(symbol=ticker_model.symbol, name=ticker_model.name, candles=candles)
         return None
 
+    @override
     def add_candles(self, symbol: str, candles: list[Candle]) -> None:
         ticker_model = self.session.scalars(select(TickerModel).where(TickerModel.symbol == symbol)).one_or_none()
         if ticker_model:

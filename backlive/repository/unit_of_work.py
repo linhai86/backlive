@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from types import TracebackType
-from typing import Self
+from typing import Self, override
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -40,17 +40,20 @@ class UnitOfWork(IUnitOfWork):
         self.session: Session | None = None
         self._repository: SQLAlchemyTickerRepository | None = None
 
+    @override
     @property
     def repository(self) -> SQLAlchemyTickerRepository:
         if self._repository is None:
             raise ValueError("UnitOfWork has not been entered.")
         return self._repository
 
+    @override
     def __enter__(self) -> Self:
         self.session = self.Session()
         self._repository = SQLAlchemyTickerRepository(self.session)
         return self
 
+    @override
     def __exit__(
         self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
     ) -> None:
@@ -61,10 +64,12 @@ class UnitOfWork(IUnitOfWork):
                 self.commit()
             self.session.close()
 
+    @override
     def commit(self) -> None:
         if self.session is not None:
             self.session.commit()
 
+    @override
     def rollback(self) -> None:
         if self.session is not None:
             self.session.rollback()
