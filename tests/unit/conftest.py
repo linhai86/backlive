@@ -6,9 +6,9 @@ from typing import Self, override
 import pytest
 
 from backlive.domain.models import Candle, Ticker
-from backlive.feed.base import IFeed
-from backlive.repository.repository import ITickerRepository
-from backlive.repository.unit_of_work import IUnitOfWork
+from backlive.infrastructure.database.repository import ITickerRepository
+from backlive.infrastructure.database.unit_of_work import IUnitOfWork
+from backlive.infrastructure.feed.base import IFeed
 
 
 class FakeTickerRepository(ITickerRepository):

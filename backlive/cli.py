@@ -4,7 +4,7 @@ import click
 
 from backlive.bootstrap import bootstrap
 from backlive.domain.commands import DownloadCandleCommand
-from backlive.repository.database_initializer import DatabaseInitializer
+from backlive.infrastructure.database.database_initializer import DatabaseInitializer
 
 
 @click.group()

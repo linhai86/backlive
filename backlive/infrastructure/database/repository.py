@@ -5,7 +5,7 @@ from typing import override
 from sqlalchemy import insert, select
 from sqlalchemy.orm import Session
 
-from ..domain.models import Candle, Ticker
+from ...domain.models import Candle, Ticker
 from .models import CandleModel, TickerModel
 
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from backlive.feed.base import IFeed
+from backlive.infrastructure.feed.base import IFeed
 
 
 def test_fetch_candles(fake_feed: IFeed) -> None:

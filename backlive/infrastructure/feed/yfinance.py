@@ -3,7 +3,7 @@ from typing import override
 
 import yfinance as yf  # type: ignore[import-untyped]
 
-from ..domain.models import Candle
+from ...domain.models import Candle
 from .base import IFeed
 
 

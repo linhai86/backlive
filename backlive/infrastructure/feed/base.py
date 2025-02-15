@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from ..domain.models import Candle
+from ...domain.models import Candle
 
 
 class IFeed(ABC):

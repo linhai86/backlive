@@ -1,8 +1,8 @@
 from ..domain.commands import DownloadCandleCommand
 from ..domain.events import CandleDownloadedEvent
 from ..domain.models import Ticker
-from ..feed.base import IFeed
-from ..repository.unit_of_work import IUnitOfWork
+from ..infrastructure.database.unit_of_work import IUnitOfWork
+from ..infrastructure.feed.base import IFeed
 from .message_bus import InMemoryMessageBus
 
 

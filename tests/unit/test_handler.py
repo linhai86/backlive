@@ -1,9 +1,9 @@
 from datetime import datetime
 
+from backlive.application.handler import DownloadCandleHandler
+from backlive.application.message_bus import InMemoryMessageBus
 from backlive.domain.commands import DownloadCandleCommand
-from backlive.feed.base import IFeed
-from backlive.service.handler import DownloadCandleHandler
-from backlive.service.message_bus import InMemoryMessageBus
+from backlive.infrastructure.feed.base import IFeed
 
 from .conftest import FakeUnitOfWork
 
