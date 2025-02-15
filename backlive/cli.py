@@ -2,10 +2,9 @@ from datetime import datetime
 
 import click
 
-from backlive.feed.yfinance import YFinanceFeed
+from backlive.bootstrap import bootstrap
+from backlive.domain.commands import DownloadCandleCommand
 from backlive.repository.database_initializer import DatabaseInitializer
-from backlive.repository.unit_of_work import UnitOfWork
-from backlive.service.service import TickerService
 
 
 @click.group()
@@ -45,13 +44,10 @@ def fetch(ctx: click.Context, url: str, symbol: str, start: datetime, end: datet
     if ctx.obj["DEBUG"]:
         click.echo(f"Fetching data for {symbol} from {start} to {end} with interval {interval}")
 
-    feed = YFinanceFeed()
-    uow = UnitOfWork(url)
-
-    ticker_service = TickerService(uow, feed)
-    ticker = ticker_service.fetch_and_save_candles(symbol)
-
-    click.echo(f"Saved ticker: {ticker.symbol} with {len(ticker.candles)} candle records")
+    message_bus = bootstrap(url)
+    message_bus.handle(
+        DownloadCandleCommand(symbol="AAPL", start=datetime.now(), end=datetime.now(), interval="1d", limit=1000)
+    )
 
 
 if __name__ == "__main__":
