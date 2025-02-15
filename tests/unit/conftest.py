@@ -63,7 +63,10 @@ class FakeUnitOfWork(IUnitOfWork):
 
 
 class FakeFeed(IFeed):
-    def fetch_candles(self, symbol: str) -> list[Candle]:
+    @override
+    def fetch_candles(
+        self, symbol: str, start: datetime, end: datetime, interval: str = "1d", limit: int = 1000
+    ) -> list[Candle]:
         return [
             Candle(
                 timestamp=datetime.now(),

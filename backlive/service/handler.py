@@ -13,7 +13,7 @@ class DownloadCandleHandler:
         self.message_bus = message_bus
 
     def handle(self, command: DownloadCandleCommand) -> None:
-        candles = self.feed.fetch_candles(command.symbol)
+        candles = self.feed.fetch_candles(command.symbol, command.start, command.end, command.interval, command.limit)
 
         with self.uow:
             ticker = self.uow.repository.get_ticker(command.symbol)

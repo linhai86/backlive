@@ -11,7 +11,7 @@ class DownloadCandleCommand(Command):
     symbol: str
     start: datetime
     end: datetime
-    interval: str  # e.g. 1d
+    interval: str
     limit: int
 
 

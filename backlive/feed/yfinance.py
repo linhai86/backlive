@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import override
 
 import yfinance as yf  # type: ignore[import-untyped]
@@ -8,9 +9,12 @@ from .base import IFeed
 
 class YFinanceFeed(IFeed):
     @override
-    def fetch_candles(self, symbol: str) -> list[Candle]:
+    def fetch_candles(
+        self, symbol: str, start: datetime, end: datetime, interval: str = "1d", limit: int = 1000
+    ) -> list[Candle]:
         ticker = yf.Ticker(symbol)
-        history = ticker.history(period="1y")
+        history = ticker.history(start=start, end=end, interval=interval)
+        history = history.head(n=limit)
         candles = [
             Candle(
                 timestamp=timestamp,

@@ -5,7 +5,7 @@ from backlive.feed.base import IFeed
 
 def test_fetch_candles(fake_feed: IFeed) -> None:
     """Test fetching candles from the fake feed."""
-    candles = fake_feed.fetch_candles("AAPL")
+    candles = fake_feed.fetch_candles(symbol="AAPL", start=datetime.now(), end=datetime.now())
 
     assert len(candles) == 1
     assert candles[0].open == 100.0
