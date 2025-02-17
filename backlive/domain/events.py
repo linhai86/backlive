@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime
 
-from .models import Candle
+from .models import Candle, Order, Portfolio
 
 
 class Event:
@@ -15,17 +14,32 @@ class CandleDownloadedEvent(Event):
 
 
 @dataclass
-class OrderPlacedEvent(Event):
-    symbol: str
-    quantity: float
-    price: float
-    order_type: str  # e.g., "buy", "sell"
+class CandleReceivedEvent(Event):
+    candle: Candle
 
 
 @dataclass
-class TradeExecutedEvent(Event):
-    symbol: str
-    quantity: float
-    price: float
-    timestamp: datetime
-    order_type: str
+class OrderPlacedEvent(Event):
+    order: Order
+
+
+@dataclass
+class OrderFilledEvent(Event):
+    order: Order
+    fill_price: float
+
+
+@dataclass
+class OrderCanceledEvent(Event):
+    order: Order
+
+
+@dataclass
+class OrderRejectedEvent(Event):
+    order: Order
+    reason: str
+
+
+@dataclass
+class BacktestCompletedEvent(Event):
+    portfolio: Portfolio

@@ -5,13 +5,18 @@ from typing import Self, override
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from .repository import ITickerRepository, SQLAlchemyTickerRepository
+from .repository import ICandleRepository, IOrderRepository, SQLAlchemyCandleRepository, SQLAlchemyOrderRepository
 
 
 class IUnitOfWork(ABC):
     @property
     @abstractmethod
-    def repository(self) -> ITickerRepository:
+    def candle_repository(self) -> ICandleRepository:
+        pass
+
+    @property
+    @abstractmethod
+    def order_repository(self) -> IOrderRepository:
         pass
 
     @abstractmethod
@@ -38,19 +43,28 @@ class UnitOfWork(IUnitOfWork):
         self.engine = create_engine(database_url, echo=True)
         self.Session = sessionmaker(bind=self.engine)
         self.session: Session | None = None
-        self._repository: SQLAlchemyTickerRepository | None = None
+        self._candle_repository: SQLAlchemyCandleRepository | None = None
+        self._order_repository: SQLAlchemyOrderRepository | None = None
 
     @override
     @property
-    def repository(self) -> SQLAlchemyTickerRepository:
-        if self._repository is None:
+    def candle_repository(self) -> SQLAlchemyCandleRepository:
+        if self._candle_repository is None:
             raise ValueError("UnitOfWork has not been entered.")
-        return self._repository
+        return self._candle_repository
+
+    @override
+    @property
+    def order_repository(self) -> SQLAlchemyOrderRepository:
+        if self._order_repository is None:
+            raise ValueError("UnitOfWork has not been entered.")
+        return self._order_repository
 
     @override
     def __enter__(self) -> Self:
         self.session = self.Session()
-        self._repository = SQLAlchemyTickerRepository(self.session)
+        self._candle_repository = SQLAlchemyCandleRepository(self.session)
+        self._order_repository = SQLAlchemyOrderRepository(self.session)
         return self
 
     @override

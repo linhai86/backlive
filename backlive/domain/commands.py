@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from .models import OrderSide, OrderType
+
 
 class Command:
     pass
@@ -20,4 +22,17 @@ class PlaceOrderCommand(Command):
     symbol: str
     quantity: float
     price: float
-    order_type: str
+    order_type: OrderType
+    side: OrderSide
+
+
+@dataclass
+class CancelOrderCommand(Command):
+    order_id: int
+
+
+@dataclass
+class RunBacktestCommand(Command):
+    symbol: str
+    start: datetime
+    end: datetime

@@ -17,6 +17,7 @@ class YFinanceFeed(IFeed):
         history = history.head(n=limit)
         candles = [
             Candle(
+                symbol=symbol,
                 timestamp=timestamp,
                 open=row["Open"],
                 high=row["High"],

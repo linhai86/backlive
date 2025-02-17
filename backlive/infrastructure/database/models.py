@@ -39,3 +39,25 @@ class CandleModel(Base):
     ticker: Mapped["TickerModel"] = relationship(back_populates="candles")
 
     __table_args__ = (UniqueConstraint("ticker_id", "timestamp"),)
+
+
+class OrderData(Base):
+    __tablename__ = "order"
+
+    order_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    symbol: Mapped[str] = mapped_column(nullable=False)
+    order_type: Mapped[int] = mapped_column(nullable=False)
+    side: Mapped[int] = mapped_column(nullable=False)
+    quantity: Mapped[float] = mapped_column(nullable=False)
+    price: Mapped[float] = mapped_column(nullable=True)  # Limit price
+    status: Mapped[int] = mapped_column(nullable=False)
+    timestamp: Mapped[datetime] = mapped_column(nullable=False)
+
+
+class PositionData(Base):
+    __tablename__ = "position"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    symbol: Mapped[str] = mapped_column(nullable=False)
+    quantity: Mapped[float] = mapped_column(nullable=False)
+    average_price: Mapped[float] = mapped_column(nullable=False)
