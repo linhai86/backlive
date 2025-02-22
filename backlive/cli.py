@@ -7,6 +7,21 @@ from backlive.domain.commands import DownloadCandleCommand, RunBacktestCommand
 from backlive.infrastructure.database.database_initializer import DatabaseInitializer
 
 
+class CommaList(click.ParamType):
+    name = "comma_list"
+
+    def convert(self, value: str, param: click.Parameter | None, ctx: click.Context | None) -> list[str]:
+        if isinstance(value, list):  # Already parsed
+            return value
+        try:
+            return [item.strip() for item in value.split(",") if item.strip()]
+        except ValueError:
+            self.fail(f"{value!r} is not a valid comma-separated list", param, ctx)
+
+
+COMMA_LIST: CommaList = CommaList()
+
+
 @click.group()
 @click.option("--debug/--no-debug", default=False, show_default=True, help="Enable debug mode.")
 @click.pass_context
@@ -33,7 +48,7 @@ def init(ctx: click.Context, url: str) -> None:
 
 @cli.command()
 @click.option("--url", default="sqlite:///tickers.db", show_default=True, help="Database URL.")
-@click.option("--symbol", required=True, help="Stock symbol (e.g., AAPL).")
+@click.option("--symbols", type=COMMA_LIST, required=True, help="Stock symbol (e.g., AAPL).")
 @click.option(
     "--start",
     type=click.DateTime(formats=["%Y-%m-%d"]),
@@ -51,13 +66,15 @@ def init(ctx: click.Context, url: str) -> None:
 @click.option("--limit", type=int, default=1000, show_default=True, help="Number of records to fetch.")
 @click.option("--interval", default="1d", show_default=True, help="Interval between data points (e.g., 1d, 1h).")
 @click.pass_context
-def fetch(ctx: click.Context, url: str, symbol: str, start: datetime, end: datetime, limit: int, interval: str) -> None:
+def fetch(
+    ctx: click.Context, url: str, symbols: list[str], start: datetime, end: datetime, limit: int, interval: str
+) -> None:
     """Fetch data and save to the database."""
     if ctx.obj["DEBUG"]:
-        click.echo(f"Fetching data for {symbol} from {start} to {end} with interval {interval}")
+        click.echo(f"Fetching data for {symbols} from {start} to {end} with interval {interval}")
 
     message_bus = bootstrap(url)
-    message_bus.handle(DownloadCandleCommand(symbol=symbol, start=start, end=end, interval=interval, limit=limit))
+    message_bus.handle(DownloadCandleCommand(symbols=symbols, start=start, end=end, interval=interval, limit=limit))
 
 
 @cli.command()

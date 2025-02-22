@@ -9,8 +9,7 @@ class Event:
 
 @dataclass
 class CandleDownloadedEvent(Event):
-    symbol: str
-    candles: list[Candle]
+    candles: dict[str, list[Candle]]
 
 
 @dataclass

@@ -12,23 +12,31 @@ from .base import IFeed
 class YFinanceFeed(IFeed):
     @override
     def fetch_candles(
-        self, symbol: str, start: datetime, end: datetime, interval: str = "1d", limit: int = 1000
-    ) -> list[Candle]:
-        ticker = yf.Ticker(symbol)
-        history = ticker.history(start=start, end=end, interval=interval)
+        self, symbols: list[str], start: datetime, end: datetime, interval: str = "1d", limit: int = 1000
+    ) -> dict[str, list[Candle]]:
+        tickers = yf.Tickers(" ".join(symbols))
+        history = tickers.history(
+            start=start, end=end, interval=interval, group_by="ticker", actions=False, progress=False
+        )
         history = history.head(n=limit)
-        candles = [
-            Candle(
-                symbol=symbol,
-                timestamp=timestamp,
-                open=row["Open"],
-                high=row["High"],
-                low=row["Low"],
-                close=row["Close"],
-                volume=row["Volume"],
-            )
-            for timestamp, row in history.iterrows()
-        ]
+        history = {
+            ticker: history[ticker].reset_index().to_dict(orient="records") for ticker in history.columns.levels[0]
+        }
+        candles = {
+            symbol: [
+                Candle(
+                    symbol=symbol,
+                    timestamp=record["Date"],
+                    open=record["Open"],
+                    high=record["High"],
+                    low=record["Low"],
+                    close=record["Close"],
+                    volume=record["Volume"],
+                )
+                for record in records
+            ]
+            for symbol, records in history.items()
+        }
         return candles
 
     @override

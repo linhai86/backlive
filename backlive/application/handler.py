@@ -20,14 +20,14 @@ class DownloadCandleHandler:
         self.message_bus = message_bus
 
     def handle(self, command: DownloadCandleCommand) -> None:
-        candles = self.feed.fetch_candles(command.symbol, command.start, command.end, command.interval, command.limit)
+        candles = self.feed.fetch_candles(command.symbols, command.start, command.end, command.interval, command.limit)
 
         with self.uow:
-            self.uow.candle_repository.add_candles(candles)
+            self.uow.candle_repository.add_candles([record for records in candles.values() for record in records])
 
             self.uow.commit()
 
-        self.message_bus.handle(CandleDownloadedEvent(symbol=command.symbol, candles=candles))
+        self.message_bus.handle(CandleDownloadedEvent(candles=candles))
 
 
 class PlaceOrderHandler:

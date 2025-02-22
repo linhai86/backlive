@@ -8,8 +8,8 @@ from ...domain.models import Candle
 class IFeed(ABC):
     @abstractmethod
     def fetch_candles(
-        self, symbol: str, start: datetime, end: datetime, interval: str = "1d", limit: int = 1000
-    ) -> list[Candle]:
+        self, symbols: list[str], start: datetime, end: datetime, interval: str = "1d", limit: int = 1000
+    ) -> dict[str, list[Candle]]:
         pass
 
     @abstractmethod

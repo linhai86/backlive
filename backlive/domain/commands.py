@@ -10,7 +10,7 @@ class Command:
 
 @dataclass
 class DownloadCandleCommand(Command):
-    symbol: str
+    symbols: list[str]
     start: datetime
     end: datetime
     interval: str
