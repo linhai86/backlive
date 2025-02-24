@@ -87,29 +87,31 @@ class OrderFilledHandler:
 
 
 class BacktestHandler:
-    def __init__(self, uow: IUnitOfWork, message_bus: InMemoryMessageBus, portfolio: Portfolio):
+    def __init__(self, uow: IUnitOfWork, feed: IFeed, message_bus: InMemoryMessageBus, portfolio: Portfolio):
         self.uow = uow
+        self.feed = feed
         self.message_bus = message_bus
         self.portfolio = portfolio
 
     def handle(self, command: RunBacktestCommand) -> None:
         with self.uow:
-            candles = self.uow.candle_repository.get_candles(command.symbol)
+            all_candles = self.feed.fetch_candles(symbols=command.symbols, start=command.start, end=command.end)
 
-            strategy = MovingAverageCrossoverStrategy(short_window=10, long_window=50)
-            for candle in candles:
-                self.message_bus.handle(CandleReceivedEvent(candle))
+            for symbol, candles in all_candles.items():
+                strategy = MovingAverageCrossoverStrategy(short_window=10, long_window=50)
+                for candle in candles:
+                    self.message_bus.handle(CandleReceivedEvent(candle))
 
-                signal = strategy.generate_signal(candle)
-                if signal == OrderSide.BUY:
-                    self._place_order(
-                        symbol=command.symbol, quantity=1, price=candle.close, order_type=OrderType.LIMIT, side=signal
-                    )
-                elif signal == OrderSide.SELL:
-                    self._place_order(
-                        symbol=command.symbol, quantity=-1, price=candle.close, order_type=OrderType.LIMIT, side=signal
-                    )
-            self.message_bus.handle(BacktestCompletedEvent(self.portfolio))
+                    signal = strategy.generate_signal(candle)
+                    if signal == OrderSide.BUY:
+                        self._place_order(
+                            symbol=symbol, quantity=1, price=candle.close, order_type=OrderType.LIMIT, side=signal
+                        )
+                    elif signal == OrderSide.SELL:
+                        self._place_order(
+                            symbol=symbol, quantity=-1, price=candle.close, order_type=OrderType.LIMIT, side=signal
+                        )
+                self.message_bus.handle(BacktestCompletedEvent(self.portfolio))
 
     def _place_order(self, symbol: str, quantity: float, price: float, order_type: OrderType, side: OrderSide) -> None:
         self.message_bus.handle(

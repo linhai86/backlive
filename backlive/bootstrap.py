@@ -11,12 +11,11 @@ from backlive.domain.commands import DownloadCandleCommand, PlaceOrderCommand, R
 from backlive.domain.events import BacktestCompletedEvent, CandleReceivedEvent, OrderFilledEvent
 from backlive.domain.models import Portfolio
 from backlive.infrastructure.database.unit_of_work import UnitOfWork
-from backlive.infrastructure.feed.yfinance import YFinanceFeed
+from backlive.infrastructure.feed.base import IFeed
+from backlive.infrastructure.feed.local_database import LocalDatabaseFeed
 
 
-def bootstrap(url: str) -> InMemoryMessageBus:
-    feed = YFinanceFeed()
-
+def bootstrap(url: str, feed: IFeed) -> InMemoryMessageBus:
     message_bus = InMemoryMessageBus()
 
     portfolio = Portfolio(balance=10000, positions={})
@@ -27,7 +26,7 @@ def bootstrap(url: str) -> InMemoryMessageBus:
     place_order_handler = PlaceOrderHandler(UnitOfWork(url), message_bus)
     order_filled_handler = OrderFilledHandler(UnitOfWork(url), message_bus, portfolio)
     execution_handler = ExecutionHandler(UnitOfWork(url), message_bus)
-    backtest_handler = BacktestHandler(UnitOfWork(url), message_bus, portfolio)
+    backtest_handler = BacktestHandler(UnitOfWork(url), LocalDatabaseFeed(url), message_bus, portfolio)
     backtest_result_handler = BacktestResultHandler()
 
     # Register Handlers

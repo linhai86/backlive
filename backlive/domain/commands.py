@@ -33,6 +33,6 @@ class CancelOrderCommand(Command):
 
 @dataclass
 class RunBacktestCommand(Command):
-    symbol: str
+    symbols: list[str]
     start: datetime
     end: datetime

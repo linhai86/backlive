@@ -5,6 +5,7 @@ import click
 from backlive.bootstrap import bootstrap
 from backlive.domain.commands import DownloadCandleCommand, RunBacktestCommand
 from backlive.infrastructure.database.database_initializer import DatabaseInitializer
+from backlive.infrastructure.feed.yfinance import YFinanceFeed
 
 
 class CommaList(click.ParamType):
@@ -73,13 +74,13 @@ def fetch(
     if ctx.obj["DEBUG"]:
         click.echo(f"Fetching data for {symbols} from {start} to {end} with interval {interval}")
 
-    message_bus = bootstrap(url)
+    message_bus = bootstrap(url=url, feed=YFinanceFeed())
     message_bus.handle(DownloadCandleCommand(symbols=symbols, start=start, end=end, interval=interval, limit=limit))
 
 
 @cli.command()
 @click.option("--url", default="sqlite:///tickers.db", show_default=True, help="Database URL.")
-@click.option("--symbol", required=True, help="Stock symbol (e.g., AAPL).")
+@click.option("--symbols", type=COMMA_LIST, required=True, help="Stock symbol (e.g., AAPL).")
 @click.option(
     "--start",
     type=click.DateTime(formats=["%Y-%m-%d"]),
@@ -95,13 +96,13 @@ def fetch(
     help="End date (YYYY-MM-DD).",
 )
 @click.pass_context
-def backtest(ctx: click.Context, url: str, symbol: str, start: datetime, end: datetime) -> None:
+def backtest(ctx: click.Context, url: str, symbols: list[str], start: datetime, end: datetime) -> None:
     """Backtest."""
     if ctx.obj["DEBUG"]:
-        click.echo(f"Backtest {symbol}")
+        click.echo(f"Backtest {symbols}")
 
-    message_bus = bootstrap(url)
-    message_bus.handle(RunBacktestCommand(symbol=symbol, start=start, end=end))
+    message_bus = bootstrap(url=url, feed=YFinanceFeed())
+    message_bus.handle(RunBacktestCommand(symbols=symbols, start=start, end=end))
 
 
 if __name__ == "__main__":
