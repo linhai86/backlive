@@ -1,7 +1,7 @@
 ################################################################################
 # Build dev
 ################################################################################
-FROM python:3.13-bookworm AS dev
+FROM python:3.14-bookworm AS dev
 
 ARG UID
 ARG GID
@@ -42,7 +42,7 @@ USER ${UID}:${GID}
 ################################################################################
 # Build virtual env for prod
 ################################################################################
-FROM python:3.13-bookworm AS venv_prod
+FROM python:3.14-bookworm AS venv_prod
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
@@ -74,7 +74,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 ################################################################################
 # Build prod
 ################################################################################
-FROM python:3.13-bookworm AS prod
+FROM python:3.14-bookworm AS prod
 
 ENV SOURCE_DIR=/app
 ENV UV_PROJECT_ENVIRONMENT=/venv
